@@ -4,20 +4,20 @@ import java.time.LocalDate;
 
 import org.springframework.data.domain.Page;
 
-import com.br.alura.financias.entities.Receita;
+import com.br.alura.financias.entities.Despesa;
 
-public class ReceitaDto {
+public class DespesaDto {
 
 	private Long id;
 	private Integer valor;
 	private String descricao;
 	private LocalDate data;
 	
-	public ReceitaDto(Receita receita) {
-		this.id = receita.getId();
-		this.valor = receita.getValor();
-		this.descricao = receita.getDescricao();
-		this.data = receita.getData();
+	public DespesaDto(Despesa despesa) {
+		this.id = despesa.getId();
+		this.valor = despesa.getValor();
+		this.descricao = despesa.getDescricao();
+		this.data = despesa.getData();
 	}
 
 	public Long getId() {
@@ -36,7 +36,7 @@ public class ReceitaDto {
 		return data;
 	}
 	
-	public static Page<ReceitaDto> convert(Page<Receita> receitas) {
-		return receitas.map(ReceitaDto::new);
+	public static Page<DespesaDto> convert(Page<Despesa> despesas) {
+		return despesas.map(DespesaDto::new);
 	}	
 }

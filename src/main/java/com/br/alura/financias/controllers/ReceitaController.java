@@ -39,7 +39,7 @@ public class ReceitaController {
 		Page<Receita> receitas;
 		receitas = receitaRepository.findAll(page);
 		
-		return ReceitaDto.converter(receitas);
+		return ReceitaDto.convert(receitas);
 	}
 	
 	@PostMapping
