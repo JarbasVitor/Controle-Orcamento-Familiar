@@ -38,6 +38,5 @@ public class ReceitaDto {
 	
 	public static Page<ReceitaDto> converter(Page<Receita> receitas) {
 		return receitas.map(ReceitaDto::new);
-	}
-	
+	}	
 }

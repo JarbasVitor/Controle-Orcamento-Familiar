@@ -42,4 +42,14 @@ public class ReceitaForm {
 		return new Receita(this.valor, this.descricao, this.data);	
 	}
 	
+	public Receita update(Long id, ReceitaRepository receitaRepository) {
+		Receita receita = receitaRepository.getReferenceById(id);
+		
+		receita.setValor(valor);
+		receita.setData(data);
+		receita.setDescricao(descricao);
+		
+		return receita;
+	}
+	
 }
