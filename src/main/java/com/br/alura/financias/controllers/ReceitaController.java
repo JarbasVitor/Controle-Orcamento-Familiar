@@ -1,6 +1,7 @@
 package com.br.alura.financias.controllers;
 
 import java.net.URI;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,9 +40,9 @@ public class ReceitaController {
 		return ReceitaDto.converter(receitas);
 	}
 	
-	@PostMapping //O IDEAL É DEVOLVER CODIGO 201 NO RESPONSE ENTITY
+	@PostMapping
 	@Transactional
-	public ResponseEntity<ReceitaDto> cadastra(@RequestBody @Valid ReceitaForm receitaForm, UriComponentsBuilder uriBuilder){
+	public ResponseEntity<ReceitaDto> register(@RequestBody @Valid ReceitaForm receitaForm, UriComponentsBuilder uriBuilder){
 		
 		Receita newReceita = receitaForm.toReceita(receitaRepository);
 		Receita receita = receitaRepository.findByDescricaoAndData(newReceita.getDescricao(), newReceita.getData());
@@ -54,5 +56,18 @@ public class ReceitaController {
 		}
 		
 		return ResponseEntity.status(409).build();
+	}
+	
+	@GetMapping("/{id}")
+	@Transactional
+	public ResponseEntity<ReceitaDto> details(@PathVariable Long id){
+		
+		Optional<Receita> receitaOptional = receitaRepository.findById(id);
+		
+		if(receitaOptional.isPresent()) {
+			return ResponseEntity.ok(new ReceitaDto(receitaOptional.get()));
+		}
+		
+		return ResponseEntity.notFound().build();
 	}
 }
