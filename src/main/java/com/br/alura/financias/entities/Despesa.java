@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -24,12 +25,16 @@ public class Despesa {
 	@Column(name = "data", nullable = false)
 	private LocalDate data;
 	
+	@ManyToOne
+	private Categoria categoria;
+	
 	public Despesa(){}
 	
-	public Despesa(Integer valor, String descricao, LocalDate data) {
+	public Despesa(Integer valor, String descricao, LocalDate data, Categoria categoria) {
 		this.valor = valor;
 		this.descricao = descricao;
 		this.data = data;
+		this.categoria = categoria;
 	}
 	
 	public Long getId() {
@@ -56,5 +61,13 @@ public class Despesa {
 	public void setData(LocalDate data) {
 		this.data = data;
 	}
+	public Categoria getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(Categoria categoria) {
+		this.categoria = categoria;
+	}
 		
+	
 }

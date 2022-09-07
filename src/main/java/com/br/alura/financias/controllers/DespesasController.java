@@ -24,6 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.br.alura.financias.controllers.dto.DespesaDto;
 import com.br.alura.financias.controllers.form.DespesaForm;
 import com.br.alura.financias.entities.Despesa;
+import com.br.alura.financias.repositories.CategoriaRepository;
 import com.br.alura.financias.repositories.DespesaRepository;
 
 @RestController
@@ -32,9 +33,11 @@ public class DespesasController {
 
 	@Autowired
 	DespesaRepository despesaRepository;
+	@Autowired
+	CategoriaRepository categoriaRepository;
 	
 	@GetMapping
-	public Page<DespesaDto> list(@PageableDefault(page = 0, size = 10) Pageable page) {
+	public Page<DespesaDto> list(@PageableDefault(sort = "id", page = 0, size = 10) Pageable page) {
 		
 		Page<Despesa> despesas;
 		despesas = despesaRepository.findAll(page);
@@ -46,15 +49,15 @@ public class DespesasController {
 	@Transactional
 	public ResponseEntity<DespesaDto> register(@RequestBody @Valid DespesaForm despesaForm, UriComponentsBuilder uriBuilder){
 		
-		Despesa newdespesa = despesaForm.todespesa(despesaRepository);
-		Despesa despesa = despesaRepository.findByDescricaoAndData(newdespesa.getDescricao(), newdespesa.getData());
+		Despesa newDespesa = despesaForm.toDespesa(despesaRepository, categoriaRepository);
+		Despesa despesa = despesaRepository.findByDescricaoAndData(newDespesa.getDescricao(), newDespesa.getData());
 		
 		if(despesa == null) {
-			despesaRepository.save(newdespesa);
+			despesaRepository.save(newDespesa);
 			
-			URI uri = uriBuilder.path("/despesas/{id}").buildAndExpand(newdespesa.getId()).toUri();
+			URI uri = uriBuilder.path("/despesas/{id}").buildAndExpand(newDespesa.getId()).toUri();
 			
-			return ResponseEntity.created(uri).body(new DespesaDto(newdespesa));
+			return ResponseEntity.created(uri).body(new DespesaDto(newDespesa));
 		}
 		
 		return ResponseEntity.status(409).build();
@@ -80,7 +83,7 @@ public class DespesasController {
 		Optional<Despesa> despesaOptional = despesaRepository.findById(id);
 		
 		if(despesaOptional.isPresent()) {
-			Despesa despesa = despesaForm.update(id, despesaRepository);
+			Despesa despesa = despesaForm.update(id, despesaRepository, categoriaRepository);
 			return ResponseEntity.ok(new DespesaDto(despesa));
 		}
 		
