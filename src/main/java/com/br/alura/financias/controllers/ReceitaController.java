@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -34,11 +35,34 @@ public class ReceitaController {
 	ReceitaRepository receitaRepository;
 	
 	@GetMapping
-	public Page<ReceitaDto> list(@PageableDefault(page = 0, size = 10) Pageable page) {
+	public Page<ReceitaDto> list(@RequestParam(required = false) String descricao,
+			@PageableDefault(page = 0, size = 10) Pageable page) {
 		
 		Page<Receita> receitas;
-		receitas = receitaRepository.findAll(page);
 		
+		if(descricao != null) {
+			receitas = receitaRepository.findByDescricaoContains(descricao, page);
+			return ReceitaDto.convert(receitas);
+		}
+		
+		receitas = receitaRepository.findAll(page);	
+		return ReceitaDto.convert(receitas);
+	}
+	
+	@GetMapping("/{ano}/{mes}")
+	public Page<ReceitaDto> listByAnoMes(@RequestParam(required = false) String descricao, 
+			@PathVariable(name = "ano")Integer ano,
+			@PathVariable(name = "mes")Integer mes,
+			@PageableDefault(page = 0, size = 10) Pageable page) {
+		
+		Page<Receita> receitas;
+		
+		if(descricao != null) {
+			receitas = receitaRepository.findByAnoAndMesAndDescricaoContains(ano,mes,descricao, page);
+			return ReceitaDto.convert(receitas);
+		}
+		
+		receitas = receitaRepository.findByAnoAndMes(ano,mes,page);	
 		return ReceitaDto.convert(receitas);
 	}
 	

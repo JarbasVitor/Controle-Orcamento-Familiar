@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -37,9 +38,16 @@ public class DespesasController {
 	CategoriaRepository categoriaRepository;
 	
 	@GetMapping
-	public Page<DespesaDto> list(@PageableDefault(sort = "id", page = 0, size = 10) Pageable page) {
+	public Page<DespesaDto> list(@RequestParam(required = false) String descricao,
+		@PageableDefault(sort = "id", page = 0, size = 10) Pageable page) {
 		
 		Page<Despesa> despesas;
+		
+		if(descricao != null) {
+			despesas = despesaRepository.findByDescricaoContains(descricao, page);
+			return DespesaDto.convert(despesas);
+		}
+		
 		despesas = despesaRepository.findAll(page);
 		
 		return DespesaDto.convert(despesas);
